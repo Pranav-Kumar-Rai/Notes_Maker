@@ -9,3 +9,8 @@
 .thumbnail .caption-full {
   padding: 9px;
 }
+
+#check {
+  font-size: 200px;
+  color: red;
+}

@@ -19,7 +19,7 @@ router.post('/comment/:filename', (req, res) => {
     const userId = req.user._id;
 
     const newComment = { text: text, author: author, filename: filename, userId: userId };
-    console.log(newComment);
+    // console.log(newComment);
     Comment.create(newComment, (err, newlyCreated) => {
         if (err)
             console.log(err);
@@ -39,8 +39,7 @@ router.delete('/notes/filename/:commentId', (req, res) => {
             res.redirect('back');
         }
     });
-    // res.redirect('/notes');
-    // res.send('sdlkfj');
+
 });
 
 function isLoggedIn(req, res, next) {

@@ -2,12 +2,16 @@ const express = require('express'),
     router = express.Router({ mergeParams: true });
 const passport = require("passport");
 const User = require("../models/user");
+const class_name = require('../models/class');
 router.get("/register", function (req, res) {
     res.render("register");
 });
 //handle sign up logic
 router.post("/register", function (req, res) {
-    var newUser = new User({ username: req.body.username });
+    var class_nam = { text: req.body.class_name };
+    console.log(class_nam);
+
+    var newUser = new User({ username: req.body.username, class_name: req.body.class_name });
     User.register(newUser, req.body.password, function (err, user) {
         if (err) {
             console.log(err);

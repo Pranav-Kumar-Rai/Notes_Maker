@@ -7,6 +7,8 @@ const multer = require('multer');
 const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
 const Comment = require('../models/comment');
+const user = require('../models/user');
+const Class_name = require('../models/class');
 
 let gfs;
 const mongoURI = 'mongodb+srv://pranav:pranav@cluster0.4lvhi.mongodb.net/pranav?retryWrites=true&w=majority';
@@ -44,7 +46,21 @@ router.get('/notes', isLoggedIn, (req, res) => {
                     file.isImage = false;
                 }
             });
-            res.render('notes', { files: files });
+
+            Class_name.find({}, (err, class_name) => {
+                if (err)
+                    console.log(err);
+                else {
+                    res.render('notes', { files: files, classic: class_name, req: req });
+                }
+
+
+
+            });
+
+
+            // console.log(classic);
+
         }
     });
 });
@@ -62,9 +78,12 @@ router.get('/notes/uploads', isLoggedIn, (req, res) => {
                 ) {
                     file.isImage = true;
                 } else {
-                    file.isImage = false;
+                    file.isImage = true;
                 }
+                // console.log(files);
+
             });
+
             res.render('uploads', { files: files });
         }
     });
@@ -74,11 +93,27 @@ router.get('/notes/uploads', isLoggedIn, (req, res) => {
 // @desc  Uploads file to DB
 router.post('/upload', upload.single('file'), (req, res) => {
     // res.json({ file: req.file });
-    res.redirect('/notes');
+    console.log(req.file.filename);
+    res.redirect(`/class/${req.file.filename}`);
 });
 
 // @route GET /files
 // @desc  Display all files in JSON
+router.get('/class/:filename', isLoggedIn, (req, res) => {
+
+    var f_name = req.params.filename;
+    var user_class = req.user.username;
+    var class_name = req.user.class_name;
+    newClass = { text: f_name, filename: user_class, class_name: class_name };
+    // console.log(newClass);
+
+    Class_name.create(newClass, (err, newlyCreated) => {
+        if (err)
+            console.log(err);
+    });
+    res.redirect('/notes');
+});
+
 router.get('/files', isLoggedIn, (req, res) => {
     gfs.files.find().toArray((err, files) => {
         // Check if files
@@ -88,24 +123,51 @@ router.get('/files', isLoggedIn, (req, res) => {
             });
         }
 
+
+        files.forEach(element => {
+
+
+
+            var f_name = element.filename;
+            var user_class = req.user.username;
+            var class_name = req.user.class_name;
+            newClass = { text: f_name, filename: user_class, class_name: class_name };
+            // console.log(newClass);
+
+            Class_name.create(newClass, (err, newlyCreated) => {
+                if (err)
+                    console.log(err);
+            });
+
+
+        })
+
         // Files exist
-        return res.json(files);
+        res.redirect('/notes');
     });
 });
 
 // @route GET /files/:filename
 // @desc  Display single file object
+let tappu;
+
+
+
 router.get('/notes/:filename', isLoggedIn, (req, res) => {
     gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
         // Check if file
-        console.log(file._id);
+        // console.log(file._id);
         if (!file || file.length === 0) {
             return res.status(404).json({
                 err: 'No file exists'
             });
         }
+        tappu = file;
+        // console.log(file);
+        // console.log(tappu);
         // File exists
         // return res.json(file);
+
         Comment.find({}, function (err, allComment) {
             if (err) {
                 console.log(err);
@@ -115,6 +177,7 @@ router.get('/notes/:filename', isLoggedIn, (req, res) => {
         });
     });
 });
+
 
 // @route GET /image/:filename
 // @desc Display Image
@@ -132,6 +195,7 @@ router.get('/image/:filename', isLoggedIn, (req, res) => {
             // Read output to browser
             const readstream = gfs.createReadStream(file.filename);
             readstream.pipe(res);
+            // console.log(tappu);
         } else {
             res.status(404).json({
                 err: 'Not an image'

@@ -32,13 +32,21 @@
           <h1 class="text-center display-4 my-4">Notes Maker File Uploads</h1>
           <form action="/upload" method="POST" enctype="multipart/form-data">
             <div class="custom-file mb-3">
+              <!-- <label for="file" class="custom-file-label">Choose File</label>
               <input
                 type="file"
                 name="file"
                 id="file"
                 class="custom-file-input"
-              />
-              <label for="file" class="custom-file-label">Choose File</label>
+              /> -->
+              <!-- <label for="file" class="btn btn-info">Select a file:</label> -->
+              <input
+                type="file"
+                class="btn btn-light"
+                id="file"
+                name="file"
+              /><br /><br />
+              <!-- <input type="submit" /> -->
             </div>
             <input
               type="submit"
