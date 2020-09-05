@@ -1,0 +1,45 @@
+<%-include('partials/header') %>
+<div class="container">
+  <header class="jumbotron">
+    <div class="container">
+      <h1>Welcome To Notes_Maker</h1>
+      <p>A Simple app to organise your Notes</p>
+      <p>
+        <a class="btn btn-primary btn-large" href="/notes/uploads"
+          >Add new Note</a
+        >
+      </p>
+    </div>
+  </header>
+
+  <div class="row text-center" style="display: flex; flex-wrap: wrap">
+    <% if(files){ %> <% files.forEach(function(file) { %>
+    <!-- console.log(<%=file._id%>) -->
+    <div class="col-md-3 col-sm-6">
+      <div class="thumbnail">
+        <a href="image/<%=file.filename%>">
+          <% if(file.isImage) { %>
+          <img src="image/<%= file.filename %>" />
+          <% } else {%>
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQ-0yaxQSl7AuV1x02OjAdY-Y3sxYCI-mKkRg&usqp=CAU"
+          />
+          <%}%>
+          <div class="caption">
+            <p style="font-size: 12px"><%= file.filename %></p>
+          </div>
+        </a>
+        <form method="POST" action="/files/<%= file._id %>?_method=DELETE">
+          <button class="btn btn-danger btn-block mt-4">Delete</button>
+        </form>
+        <br />
+        <a href="/notes/<%= file.filename %>">
+          <button class="btn btn-primary btn-block mt-4">More Info</button>
+        </a>
+      </div>
+    </div>
+    <% })} %>
+  </div>
+</div>
+
+<%-include('partials/footer') %>
